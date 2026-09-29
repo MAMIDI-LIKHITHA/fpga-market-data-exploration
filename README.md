@@ -55,11 +55,11 @@ The intended contribution is a reproducible, controlled comparison of multiple a
 - [x] Define architecture candidates
 - [x] Define measurement methodology
 - [x] Define simplified market-data format
-- [ ] Build Python traffic generator
-- [ ] Build Python golden order-book model
-- [ ] Build baseline SystemVerilog RTL
-- [ ] Build baseline testbench and assertions
-- [ ] Establish cycle-accurate latency instrumentation
+- [x] Build Python traffic generator
+- [x] Build Python golden order-book model
+- [x] Build baseline SystemVerilog RTL
+- [x] Build baseline testbench and golden comparison
+- [x] Establish cycle-accurate latency instrumentation
 - [ ] Synthesize baseline and collect timing/resource reports
 - [ ] Implement streaming architecture
 - [ ] Implement parallel architecture
@@ -71,9 +71,11 @@ The intended contribution is a reproducible, controlled comparison of multiple a
 - [ ] Write research paper
 
 ## Status
-Stage 0 — Project specification and methodology.
+Phase 2 — Baseline RTL functionally verified.
 
-No performance claim is made until RTL is implemented, verified, synthesized, and measured.
+The baseline RTL matches the Python golden reference for 1,000 deterministic mixed-workload vectors with 0 failures and 0 timeouts. The current simulation reports 1-cycle transaction latency at the testbench boundary. This is not an FPGA implementation timing result; synthesis and implementation measurements are still pending.
+
+Verification details: docs/PHASE2_VERIFICATION.md
 
 ## Author
 Mamidi Likhitha
