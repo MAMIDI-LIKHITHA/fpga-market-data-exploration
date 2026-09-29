@@ -36,8 +36,9 @@
 - [x] Complete placement and routing
 - [x] Add and apply baseline SDC clock constraint
 - [x] Collect baseline resource utilization
-- [x] Collect preliminary timing/critical-path report
-- [ ] Refine timing constraints and isolate synchronous timing metric
+- [x] Collect synchronous critical-path/Fmax result
+- [x] Refine timing constraints and isolate synchronous timing metric
+- [x] Document synchronous critical-path/Fmax result separately from I/O timing
 
 ## Phase 4 — Architecture exploration
 - [ ] Streaming/cut-through
