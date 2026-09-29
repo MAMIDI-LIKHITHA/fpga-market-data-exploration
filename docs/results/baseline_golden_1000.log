@@ -1,0 +1,39 @@
+==============================================
+BASELINE MARKET PIPELINE GOLDEN TEST
+Vectors: 1000
+Timeout: 100 cycles
+==============================================
+Loaded events.mem
+Loaded expected.mem
+PASS vector 0 latency=1 cycles
+PASS vector 1 latency=1 cycles
+PASS vector 2 latency=1 cycles
+PASS vector 3 latency=1 cycles
+PASS vector 4 latency=1 cycles
+PASS vector 5 latency=1 cycles
+PASS vector 6 latency=1 cycles
+PASS vector 7 latency=1 cycles
+PASS vector 8 latency=1 cycles
+PASS vector 9 latency=1 cycles
+PASS vector 99 latency=1 cycles
+PASS vector 199 latency=1 cycles
+PASS vector 299 latency=1 cycles
+PASS vector 399 latency=1 cycles
+PASS vector 499 latency=1 cycles
+PASS vector 599 latency=1 cycles
+PASS vector 699 latency=1 cycles
+PASS vector 799 latency=1 cycles
+PASS vector 899 latency=1 cycles
+PASS vector 999 latency=1 cycles
+
+==============================================
+GOLDEN TEST SUMMARY
+==============================================
+Vectors checked : 1000
+Failures        : 0
+GOLDEN TEST PASSED: 1000/1000 vectors
+==============================================
+** Note: $finish : tb/sv/tb_baseline_golden.sv(208)
+   Time: 30045 ps  Iteration: 1  Instance: /tb_baseline_golden
+1
+Break in Module tb_baseline_golden at tb/sv/tb_baseline_golden.sv line 208
