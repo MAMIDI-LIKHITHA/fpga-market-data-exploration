@@ -112,8 +112,15 @@ class ReferenceModel:
         self._apply_book_update(event)
 
         best_bid, best_ask = self._best_prices()
-        spread = best_ask - best_bid if best_bid is not None and best_ask is not None else None
-        signal = int(spread is not None and spread <= self.spread_threshold)
+        # Match the baseline RTL semantics: an incomplete book reports spread=0,
+        # while a crossed book (best ask < best bid) does not generate a signal.
+        spread = best_ask - best_bid if best_bid is not None and best_ask is not None else 0
+        signal = int(
+            best_bid is not None
+            and best_ask is not None
+            and best_ask >= best_bid
+            and spread <= self.spread_threshold
+        )
         output_price = best_bid if signal else None
         output_quantity = self.min_order_qty if signal else 0
         risk_accept = int(signal and self.position + output_quantity <= self.max_position)
