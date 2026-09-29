@@ -97,4 +97,4 @@ The implementation constraint is stored in constraints/ecp5_baseline.sdc.
 
 Phase 3 has established a reproducible ECP5 synthesis/placement/routing baseline and exposed an important implementation bottleneck: the current order-book logic is LUT-heavy and routing-heavy, while the physical interface consumes 89% of available I/O resources. Timing closure at the 100 MHz target has not been achieved.
 
-The next Phase 3 task is to refine timing constraints/reporting enough to obtain a clean synchronous timing metric. Only then should the architectural alternatives be compared against the baseline.
+Phase 3 is now closed. The synchronous timing metric has been isolated and documented separately from the I/O timing paths. Phase 4 can begin with the streaming/cut-through architecture, using this baseline as the controlled reference.
