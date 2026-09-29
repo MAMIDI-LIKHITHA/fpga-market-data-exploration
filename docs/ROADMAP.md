@@ -39,6 +39,7 @@
 - [x] Collect synchronous critical-path/Fmax result
 - [x] Refine timing constraints and isolate synchronous timing metric
 - [x] Document synchronous critical-path/Fmax result separately from I/O timing
+- [x] Close Phase 3 implementation measurement
 
 ## Phase 4 — Architecture exploration
 - [ ] Streaming/cut-through
