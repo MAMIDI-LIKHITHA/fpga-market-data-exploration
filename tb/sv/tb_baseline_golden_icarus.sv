@@ -1,36 +1,52 @@
 module tb_baseline_golden_icarus;
 
-  localparam int N = 1000;
-  localparam int TIMEOUT_CYCLES = 100;
+  localparam N = 1000;
+  localparam TIMEOUT_CYCLES = 100;
 
-  logic clk = 0;
-  logic rst_n = 0;
-  logic in_valid = 0;
-  logic [127:0] in_event = 0;
+  reg clk;
+  reg rst_n;
+  reg in_valid;
+  reg [127:0] in_event;
 
-  logic in_ready;
-  logic out_valid;
+  wire in_ready;
+  wire out_valid;
 
-  logic [31:0] out_sequence;
-  logic [31:0] out_best_bid;
-  logic [31:0] out_best_ask;
-  logic [31:0] out_spread;
-  logic [31:0] out_price;
-  logic [31:0] out_quantity;
-  logic out_signal;
-  logic out_risk_accept;
-  logic [63:0] out_latency_cycles;
+  wire [31:0] out_sequence;
+  wire [31:0] out_best_bid;
+  wire [31:0] out_best_ask;
+  wire [31:0] out_spread;
+  wire [31:0] out_price;
+  wire [31:0] out_quantity;
+  wire out_signal;
+  wire out_risk_accept;
+  wire [63:0] out_latency_cycles;
 
-  integer failures = 0;
-  integer received = 0;
+  integer failures;
+  integer received;
   integer k;
 
-  logic [127:0] events [0:N-1];
-  logic [255:0] expected [0:N-1];
+  reg [127:0] events [0:N-1];
+  reg [255:0] expected [0:N-1];
+  reg [127:0] current_event;
+  reg [255:0] current_expected;
+  reg send_ok;
+  reg check_ok;
+
+  initial begin
+    clk = 1'b0;
+    rst_n = 1'b0;
+    in_valid = 1'b0;
+    in_event = 128'b0;
+    failures = 0;
+    received = 0;
+    k = 0;
+  end
 
   always #5 clk = ~clk;
 
-  task automatic send_event(input [127:0] word, output bit success);
+  task send_event;
+    input [127:0] word;
+    output success;
     integer wait_cycles;
     begin
       success = 1'b1;
@@ -60,7 +76,9 @@ module tb_baseline_golden_icarus;
     end
   endtask
 
-  task automatic check_output(input [255:0] exp, output bit success);
+  task check_output;
+    input [255:0] exp;
+    output success;
     reg [31:0] eseq;
     reg [31:0] ebid;
     reg [31:0] eask;
@@ -71,7 +89,6 @@ module tb_baseline_golden_icarus;
     reg esignal;
     reg erisk;
     integer wait_cycles;
-
     begin
       success = 1'b1;
       wait_cycles = 0;
@@ -109,53 +126,26 @@ module tb_baseline_golden_icarus;
           out_quantity !== eqty) begin
 
         $display("FAIL vector %0d", received);
-
         $display(
           "  GOT seq=%0d bid=%h ask=%h spread=%h signal=%0d risk=%0d price=%h qty=%h latency=%0d",
-          out_sequence,
-          out_best_bid,
-          out_best_ask,
-          out_spread,
-          out_signal,
-          out_risk_accept,
-          out_price,
-          out_quantity,
+          out_sequence, out_best_bid, out_best_ask, out_spread,
+          out_signal, out_risk_accept, out_price, out_quantity,
           out_latency_cycles
         );
-
         $display(
-          "  EXP seq=%0d bid=%h ask=%h spread=%h signal=%0d risk=%0d price=%h qty=%h",
-          eseq,
-          ebid,
-          eask,
-          espread,
-          esignal,
-          erisk,
-          eprice,
-          eqty
+          "  EXP seq=%0d bid=%0d ask=%0d spread=%0d signal=%0d risk=%0d price=%h qty=%h",
+          eseq, ebid, eask, espread, esignal, erisk, eprice, eqty
         );
-
         failures = failures + 1;
-
-      end else begin
-
-        if ((received < 10) || ((received + 1) % 100 == 0))
-          $display(
-            "PASS vector %0d latency=%0d cycles",
-            received,
-            out_latency_cycles
-          );
-
+      end
+      else if ((received < 10) || (((received + 1) % 100) == 0)) begin
+        $display("PASS vector %0d latency=%0d cycles",
+                 received, out_latency_cycles);
       end
     end
   endtask
 
   initial begin
-    bit send_ok;
-    bit check_ok;
-    reg [127:0] current_event;
-    reg [255:0] current_expected;
-
     $display("==============================================");
     $display("BASELINE MARKET PIPELINE GOLDEN TEST (ICARUS)");
     $display("Vectors: %0d", N);
@@ -168,31 +158,32 @@ module tb_baseline_golden_icarus;
     $display("Loaded events.mem");
     $display("Loaded expected.mem");
 
-    repeat (3)
-      @(posedge clk);
-
+    repeat (3) @(posedge clk);
     rst_n = 1'b1;
 
-    for (k = 0; k < N; k = k + 1) begin
+    k = 0;
+    while (k < N) begin
       current_event = events[k];
       current_expected = expected[k];
 
       send_event(current_event, send_ok);
 
-      if (send_ok) begin
+      if (send_ok)
         check_output(current_expected, check_ok);
-      end
+      else
+        check_ok = 1'b0;
 
       if (!send_ok || !check_ok) begin
         $display("ABORTING GOLDEN TEST after vector %0d", received);
         k = N;
       end
-
-      received = received + 1;
+      else begin
+        received = received + 1;
+        k = k + 1;
+      end
     end
 
-    repeat (2)
-      @(posedge clk);
+    repeat (2) @(posedge clk);
 
     $display("");
     $display("==============================================");
@@ -207,7 +198,6 @@ module tb_baseline_golden_icarus;
       $display("GOLDEN TEST FAILED: %0d failures", failures);
 
     $display("==============================================");
-
     $finish;
   end
 
@@ -217,18 +207,15 @@ module tb_baseline_golden_icarus;
     .in_valid(in_valid),
     .in_event(in_event),
     .in_ready(in_ready),
-
     .out_valid(out_valid),
     .out_sequence(out_sequence),
     .out_best_bid(out_best_bid),
     .out_best_ask(out_best_ask),
     .out_spread(out_spread),
-
     .out_signal(out_signal),
     .out_risk_accept(out_risk_accept),
     .out_price(out_price),
     .out_quantity(out_quantity),
-
     .out_latency_cycles(out_latency_cycles)
   );
 
