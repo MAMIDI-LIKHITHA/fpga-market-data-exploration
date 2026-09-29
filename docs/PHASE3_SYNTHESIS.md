@@ -37,36 +37,45 @@ The design therefore fits the selected device, although top-level I/O utilizatio
 
 The SDC clock constraint was recognized by nextpnr: constraining clock net clk to 100.00 MHz.
 
-The final report contains two relevant timing paths:
+The final timing report contains three relevant path classes:
 
-1. Internal clocked path:
-   - Logic delay: **2.88 ns**
-   - Routing delay: **26.56 ns**
-   - Total reported path: **29.44 ns**
-   - Endpoint: flip-flop clock-enable (CE)
+1. **Synchronous register-to-register critical path**
+   - Total delay: **313.064 ns**
+   - Reported Fmax: **3.194 MHz**
+   - This is the path that determines the reported synchronous clock frequency.
+   - The path is dominated by the combinational best-price/order-book path and downstream comparison/arithmetic, including substantial routing and carry-chain delay.
 
-2. Clock-to-output path:
-   - Clock-to-Q: **0.40 ns**
-   - Routing delay: **7.45 ns**
-   - Total: **7.84 ns**
-   - Endpoint: out_best_ask[21]
+2. **Input/I/O timing path**
+   - `<async> -> posedge clk`: **29.442 ns**
+   - This is an I/O timing path, not the synchronous pipeline critical path.
 
-nextpnr also reports:
-- <async> -> posedge clk: **29.44 ns**
-- posedge clk -> <async>: **7.84 ns**
-- Reported Fmax: **3.19 MHz**
+3. **Clock-to-output I/O path**
+   - `posedge clk -> <async>`: **7.845 ns**
+   - Example endpoint: `out_best_ask[21]`.
+
+The critical-path report for the synchronous path shows substantial routing delay and a long carry-chain/combinational path associated with the order-book best-price logic and downstream logic in `baseline_market_pipeline.sv`.
+
+nextpnr reports:
+- Synchronous critical-path delay: **313.064 ns**
+- Fmax: **3.194 MHz**
 - 100 MHz constraint: **FAIL**
 - Warnings: **0**
 - Errors: **1 timing error**
 - Program finished normally.
 
+At 100 MHz, the target period is 10 ns, so the measured synchronous path is far beyond the requested period. The current baseline therefore does not achieve 100 MHz timing closure.
+
 ### Timing interpretation
 
-The reported **3.19 MHz Fmax must not be treated as the intrinsic synchronous Fmax of the market-data processing pipeline**. The report's timing endpoints include <async> I/O paths, while the displayed 29.44 ns path ends at a flip-flop CE and the 7.84 ns path ends at a top-level output.
+The **313.064 ns clock-to-clock path is the actual synchronous critical path** and explains the reported 3.194 MHz Fmax:
 
-The 29.44 ns path by itself corresponds to approximately 34 MHz, so it does not mathematically explain the reported 3.19 MHz value. The current result is therefore recorded as an **I/O/asynchronous timing-dominated implementation result**, not as a clean register-to-register Fmax benchmark.
+Fmax ≈ 1 / 313.064 ns ≈ **3.194 MHz**
 
-Before comparing architectures by Fmax, the timing methodology should be refined to isolate synchronous register-to-register paths and define input/output timing assumptions consistently.
+The previously reported 29.442 ns and 7.845 ns values are separate I/O timing paths and should not be used as the synchronous Fmax calculation.
+
+This distinction is important: simulation transaction latency and physical FPGA timing measure different things. A transaction can require one simulated clock cycle while the implemented design still has a long register-to-register critical path that limits the maximum clock frequency.
+
+The baseline order book uses a deliberately simple combinational best-price scan across the order-book entries. This provides a useful stress case for architectural exploration, but it is not intended to represent an optimized production HFT order-book implementation.
 
 ## Latency
 
