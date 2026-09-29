@@ -49,81 +49,82 @@ module order_book_optimized #(parameter int DEPTH=64)(
   logic [31:0] ask_stage4 [0:3];
   logic [31:0] ask_stage5 [0:1];
 
-  integer i;
+  integer i_comb;
+  integer i_seq;
 
   assign ready_o = 1'b1;
 
   always_comb begin
-    for (i=0; i<64; i=i+1) begin
-      if (active[i] && !side_mem[i])
-        bid_stage0[i] = price_mem[i];
+    for (i_comb=0; i_comb<64; i_comb=i_comb+1) begin
+      if (active[i_comb] && !side_mem[i_comb])
+        bid_stage0[i_comb] = price_mem[i_comb];
       else
-        bid_stage0[i] = 32'd0;
+        bid_stage0[i_comb] = 32'd0;
 
-      if (active[i] && side_mem[i])
-        ask_stage0[i] = price_mem[i];
+      if (active[i_comb] && side_mem[i_comb])
+        ask_stage0[i_comb] = price_mem[i_comb];
       else
-        ask_stage0[i] = 32'hFFFFFFFF;
+        ask_stage0[i_comb] = 32'hFFFFFFFF;
     end
 
-    for (i=0; i<32; i=i+1) begin
-      if (bid_stage0[2*i] >= bid_stage0[2*i+1])
-        bid_stage1[i] = bid_stage0[2*i];
+    for (i_comb=0; i_comb<32; i_comb=i_comb+1) begin
+      if (bid_stage0[2*i_comb] >= bid_stage0[2*i_comb+1])
+        bid_stage1[i_comb] = bid_stage0[2*i_comb];
       else
-        bid_stage1[i] = bid_stage0[2*i+1];
+        bid_stage1[i_comb] = bid_stage0[2*i_comb+1];
 
-      if (ask_stage0[2*i] <= ask_stage0[2*i+1])
-        ask_stage1[i] = ask_stage0[2*i];
+      if (ask_stage0[2*i_comb] <= ask_stage0[2*i_comb+1])
+        ask_stage1[i_comb] = ask_stage0[2*i_comb];
       else
-        ask_stage1[i] = ask_stage0[2*i+1];
+        ask_stage1[i_comb] = ask_stage0[2*i_comb+1];
     end
 
-    for (i=0; i<16; i=i+1) begin
-      if (bid_stage1[2*i] >= bid_stage1[2*i+1])
-        bid_stage2[i] = bid_stage1[2*i];
+    for (i_comb=0; i_comb<16; i_comb=i_comb+1) begin
+      if (bid_stage1[2*i_comb] >= bid_stage1[2*i_comb+1])
+        bid_stage2[i_comb] = bid_stage1[2*i_comb];
       else
-        bid_stage2[i] = bid_stage1[2*i+1];
+        bid_stage2[i_comb] = bid_stage1[2*i_comb+1];
 
-      if (ask_stage1[2*i] <= ask_stage1[2*i+1])
-        ask_stage2[i] = ask_stage1[2*i];
+      if (ask_stage1[2*i_comb] <= ask_stage1[2*i_comb+1])
+        ask_stage2[i_comb] = ask_stage1[2*i_comb];
       else
-        ask_stage2[i] = ask_stage1[2*i+1];
+        ask_stage2[i_comb] = ask_stage1[2*i_comb+1];
     end
 
-    for (i=0; i<8; i=i+1) begin
-      if (bid_stage2[2*i] >= bid_stage2[2*i+1])
-        bid_stage3[i] = bid_stage2[2*i];
+    for (i_comb=0; i_comb<8; i_comb=i_comb+1) begin
+      if (bid_stage2[2*i_comb] >= bid_stage2[2*i_comb+1])
+        bid_stage3[i_comb] = bid_stage2[2*i_comb];
       else
-        bid_stage3[i] = bid_stage2[2*i+1];
+        bid_stage3[i_comb] = bid_stage2[2*i_comb+1];
 
-      if (ask_stage2[2*i] <= ask_stage2[2*i+1])
-        ask_stage3[i] = ask_stage2[2*i];
+      if (ask_stage2[2*i_comb] <= ask_stage2[2*i_comb+1])
+        ask_stage3[i_comb] = ask_stage2[2*i_comb];
       else
-        ask_stage3[i] = ask_stage2[2*i+1];
+        ask_stage3[i_comb] = ask_stage2[2*i_comb+1];
     end
 
-    for (i=0; i<4; i=i+1) begin
-      if (bid_stage3[2*i] >= bid_stage3[2*i+1])
-        bid_stage4[i] = bid_stage3[2*i];
+    for (i_comb=0; i_comb<4; i_comb=i_comb+1) begin
+      if (bid_stage3[2*i_comb] >= bid_stage3[2*i_comb+1])
+        bid_stage4[i_comb] = bid_stage3[2*i_comb];
       else
-        bid_stage4[i] = bid_stage3[2*i+1];
+        bid_stage4[i_comb] = bid_stage3[2*i_comb+1];
 
-      if (ask_stage3[2*i] <= ask_stage3[2*i+1])
-        ask_stage4[i] = ask_stage3[2*i];
+      if (ask_stage3[2*i_comb] <= ask_stage3[2*i_comb+1])
+        ask_stage4[i_comb] = ask_stage3[2*i_comb];
       else
-        ask_stage4[i] = ask_stage3[2*i+1];
+        ask_stage4[i_comb] = ask_stage3[2*i_comb+1];
     end
 
-    for (i=0; i<2; i=i+1) begin
-      if (bid_stage4[2*i] >= bid_stage4[2*i+1])
-        bid_stage5[i] = bid_stage4[2*i];
+    for (i_comb=0; i_comb<2; i_comb=i_comb+1) begin
+      if (bid_stage4[2*i_comb] >= bid_stage4[2*i_comb+1])
+        bid_stage5[i_comb] = bid_stage4[2*i_comb];
       else
-        bid_stage5[i] = bid_stage4[2*i+1];
+        bid_stage5[i_comb] = bid_stage4[2*i_comb+1];
 
-      if (ask_stage4[2*i] <= ask_stage4[2*i+1])
-        ask_stage5[i] = ask_stage4[2*i];
+      if (ask_stage4[2*i_comb] <= ask_stage4[2*i_comb+1])
+        ask_stage5[i_comb] = ask_stage4[2*i_comb];
       else
-        ask_stage5[i] = ask_stage4[2*i+1];
+        ask_stage5[i_comb] = ask_stage4[2*i_comb+1];
     end
 
     if (bid_stage5[0] >= bid_stage5[1])
@@ -140,11 +141,11 @@ module order_book_optimized #(parameter int DEPTH=64)(
   always_ff @(posedge clk or negedge rst_n) begin
     if (!rst_n) begin
       valid_o <= 1'b0;
-      for (i=0; i<64; i=i+1) begin
-        active[i] <= 1'b0;
-        side_mem[i] <= 1'b0;
-        price_mem[i] <= 32'd0;
-        qty_mem[i] <= 32'd0;
+      for (i_seq=0; i_seq<64; i_seq=i_seq+1) begin
+        active[i_seq] <= 1'b0;
+        side_mem[i_seq] <= 1'b0;
+        price_mem[i_seq] <= 32'd0;
+        qty_mem[i_seq] <= 32'd0;
       end
     end else begin
       valid_o <= 1'b0;
