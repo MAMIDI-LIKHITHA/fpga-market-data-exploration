@@ -31,10 +31,13 @@
 - [x] Verify latency measurement
 - [ ] Create automated result extraction
 - [x] Run baseline 1,000-vector workload
-- [ ] Select and document FPGA target
-- [ ] Synthesize baseline
-- [ ] Collect Fmax/WNS/TNS/critical path
-- [ ] Collect LUT/FF/BRAM/DSP utilization
+- [x] Select and document FPGA target
+- [x] Synthesize baseline
+- [x] Complete placement and routing
+- [x] Add and apply baseline SDC clock constraint
+- [x] Collect baseline resource utilization
+- [x] Collect preliminary timing/critical-path report
+- [ ] Refine timing constraints and isolate synchronous timing metric
 
 ## Phase 4 — Architecture exploration
 - [ ] Streaming/cut-through
