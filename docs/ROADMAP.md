@@ -9,22 +9,22 @@
 - [x] Initial literature framework
 
 ## Phase 1 — Software reference
-- [ ] Define Python message schema
-- [ ] Build traffic generator
-- [ ] Build order-book model
-- [ ] Build strategy/risk reference
-- [ ] Generate golden outputs
+- [x] Define Python message schema
+- [x] Build traffic generator
+- [x] Build order-book model
+- [x] Build strategy/risk reference
+- [x] Generate golden outputs
 
 ## Phase 2 — Baseline RTL
-- [ ] Define SystemVerilog interfaces
-- [ ] Implement packet buffer
-- [ ] Implement parser
-- [ ] Implement order book
-- [ ] Implement strategy
-- [ ] Implement risk gate
-- [ ] Implement order generator
-- [ ] Add assertions
-- [ ] Build testbench
+- [x] Define SystemVerilog interfaces
+- [x] Implement packet buffer
+- [x] Implement parser
+- [x] Implement order book
+- [x] Implement strategy
+- [x] Implement risk gate
+- [x] Implement order generator
+- [x] Add assertions
+- [x] Build testbench
 
 ## Phase 3 — Measurement
 - [x] Add cycle counter/timestamps
