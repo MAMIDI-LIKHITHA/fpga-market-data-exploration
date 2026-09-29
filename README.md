@@ -60,6 +60,7 @@ The intended contribution is a reproducible, controlled comparison of multiple a
 - [x] Build baseline SystemVerilog RTL
 - [x] Build baseline testbench and golden comparison
 - [x] Establish cycle-accurate latency instrumentation
+- [x] Verify baseline against 1,000 deterministic mixed-workload golden vectors
 - [ ] Synthesize baseline and collect timing/resource reports
 - [ ] Implement streaming architecture
 - [ ] Implement parallel architecture
@@ -73,7 +74,7 @@ The intended contribution is a reproducible, controlled comparison of multiple a
 ## Status
 Phase 2 — Baseline RTL functionally verified.
 
-The baseline RTL matches the Python golden reference for 1,000 deterministic mixed-workload vectors with 0 failures and 0 timeouts. The current simulation reports 1-cycle transaction latency at the testbench boundary. This is not an FPGA implementation timing result; synthesis and implementation measurements are still pending.
+The baseline RTL matches the Python golden reference for 1,000 deterministic mixed-workload vectors with 0 failures and 0 timeouts. ModelSim reached vector 999 and completed normally through the testbench `$finish`. The current simulation reports 1-cycle transaction latency at the testbench boundary for the verified vectors. This is not an FPGA implementation timing result; synthesis and implementation measurements are still pending.
 
 Verification details: docs/PHASE2_VERIFICATION.md
 
