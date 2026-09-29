@@ -63,8 +63,9 @@ The intended contribution is a reproducible, controlled comparison of multiple a
 - [x] Verify baseline against 1,000 deterministic mixed-workload golden vectors
 - [x] Complete ECP5 baseline synthesis, placement, and routing
 - [x] Record baseline resource utilization
-- [x] Record preliminary implementation timing and critical-path results
-- [ ] Refine synchronous timing constraints/reporting
+- [x] Record synchronous critical-path/Fmax result
+- [x] Separate I/O timing paths from synchronous timing
+- [x] Close baseline Phase 3 implementation measurement
 - [ ] Implement streaming architecture
 - [ ] Implement parallel architecture
 - [ ] Implement hybrid architecture
@@ -75,9 +76,9 @@ The intended contribution is a reproducible, controlled comparison of multiple a
 - [ ] Write research paper
 
 ## Status
-Phase 3 — Baseline FPGA implementation measurement in progress.
+Phase 4 — Architecture exploration ready to begin.
 
-The baseline RTL matches the Python golden reference for 1,000 deterministic mixed-workload vectors with 0 failures and 0 timeouts. The ECP5 implementation now completes synthesis, placement, and routing using the physical wrapper, with 19,056 LUT4s (22%), 4,452 FFs (5%), and 327/365 I/O (89%). The current nextpnr timing report is dominated by asynchronous/I/O timing endpoints and reports 3.19 MHz at a 100 MHz constraint; this is recorded as a preliminary implementation result, not as a clean intrinsic pipeline Fmax. See docs/PHASE3_SYNTHESIS.md for details.
+The baseline RTL matches the Python golden reference for 1,000 deterministic mixed-workload vectors with 0 failures and 0 timeouts. The ECP5 implementation now completes synthesis, placement, and routing using the physical wrapper, with 19,056 LUT4s (22%), 4,452 FFs (5%), and 327/365 I/O (89%). The synchronous critical path is **313.064 ns**, corresponding to a reported **3.194 MHz Fmax** at the 100 MHz (10 ns) clock constraint. The path is dominated by the combinational best-price/order-book logic and downstream comparison/arithmetic, with substantial routing/carry-chain delay. Separate I/O timing paths are 29.442 ns input-to-clock and 7.845 ns clock-to-output; these are not the synchronous Fmax metric. See docs/PHASE3_SYNTHESIS.md for details.
 
 Verification details: docs/PHASE2_VERIFICATION.md
 
