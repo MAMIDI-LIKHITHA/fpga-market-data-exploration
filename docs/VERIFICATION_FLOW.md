@@ -12,7 +12,7 @@ The expected-state encoding uses 0xFFFFFFFF as the sentinel for an absent option
 
 ## Current smoke test
 
-tb/sv/tb_baseline_golden.sv contains eight deterministic vectors covering ADD, MODIFY, TRADE and CANCEL, including both signal and no-signal cases.
+tb/sv/tb_baseline_golden.sv is the golden comparison testbench. It was used to verify 1,000 deterministic mixed-workload vectors covering ADD, MODIFY, TRADE and CANCEL cases, including signal and no-signal cases.
 
 ## Reproducible flow
 
@@ -22,6 +22,10 @@ tb/sv/tb_baseline_golden.sv contains eight deterministic vectors covering ADD, M
 4. Run the SystemVerilog simulation.
 5. Compare every output field at the same RX-to-TX measurement boundary.
 6. Record latency cycles and, after synthesis/implementation, convert cycles to nanoseconds using the achieved clock period.
+
+## Verified baseline result
+
+The 2026-09-29 ModelSim run checked all 1,000 vectors with 0 failures and 0 timeouts. The observed transaction latency was 1 cycle for every reported PASS vector. See docs/PHASE2_VERIFICATION.md for the archived output.
 
 ## Research rule
 
