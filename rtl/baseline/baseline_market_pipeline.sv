@@ -7,7 +7,7 @@ module baseline_market_pipeline(
 );
   logic ob_valid,ob_ready; logic [31:0] best_bid,best_ask;
   logic [63:0] timestamp,rx_timestamp; logic [31:0] sequence_r,position;
-  wire [7:0] msg_type=in_event[127:120]; wire [31:0] sequence=in_event[119:88];
+  wire [7:0] msg_type=in_event[127:120]; wire [31:0] seq_num=in_event[119:88];
   wire side=in_event[87]; wire [15:0] order_id=in_event[79:64];
   wire [31:0] price=in_event[63:32]; wire [31:0] quantity=in_event[31:0];
   assign in_ready=ob_ready;
@@ -19,7 +19,7 @@ module baseline_market_pipeline(
       out_signal<=0; out_risk_accept<=0; out_price<=0; out_quantity<=0; out_latency_cycles<=0;
     end else begin
       timestamp<=timestamp+1; out_valid<=0;
-      if(in_valid && in_ready) begin rx_timestamp<=timestamp; sequence_r<=sequence; end
+      if(in_valid && in_ready) begin rx_timestamp<=timestamp; sequence_r<=seq_num; end
       if(ob_valid) begin
         out_valid<=1; out_sequence<=sequence_r; out_best_bid<=best_bid; out_best_ask<=best_ask;
         if(best_ask!=32'hFFFFFFFF && best_bid!=0) begin
