@@ -61,7 +61,10 @@ The intended contribution is a reproducible, controlled comparison of multiple a
 - [x] Build baseline testbench and golden comparison
 - [x] Establish cycle-accurate latency instrumentation
 - [x] Verify baseline against 1,000 deterministic mixed-workload golden vectors
-- [ ] Synthesize baseline and collect timing/resource reports
+- [x] Complete ECP5 baseline synthesis, placement, and routing
+- [x] Record baseline resource utilization
+- [x] Record preliminary implementation timing and critical-path results
+- [ ] Refine synchronous timing constraints/reporting
 - [ ] Implement streaming architecture
 - [ ] Implement parallel architecture
 - [ ] Implement hybrid architecture
@@ -72,9 +75,9 @@ The intended contribution is a reproducible, controlled comparison of multiple a
 - [ ] Write research paper
 
 ## Status
-Phase 2 — Baseline RTL functionally verified.
+Phase 3 — Baseline FPGA implementation measurement in progress.
 
-The baseline RTL matches the Python golden reference for 1,000 deterministic mixed-workload vectors with 0 failures and 0 timeouts. ModelSim reached vector 999 and completed normally through the testbench `$finish`. The current simulation reports 1-cycle transaction latency at the testbench boundary for the verified vectors. This is not an FPGA implementation timing result; synthesis and implementation measurements are still pending.
+The baseline RTL matches the Python golden reference for 1,000 deterministic mixed-workload vectors with 0 failures and 0 timeouts. The ECP5 implementation now completes synthesis, placement, and routing using the physical wrapper, with 19,056 LUT4s (22%), 4,452 FFs (5%), and 327/365 I/O (89%). The current nextpnr timing report is dominated by asynchronous/I/O timing endpoints and reports 3.19 MHz at a 100 MHz constraint; this is recorded as a preliminary implementation result, not as a clean intrinsic pipeline Fmax. See docs/PHASE3_SYNTHESIS.md for details.
 
 Verification details: docs/PHASE2_VERIFICATION.md
 
