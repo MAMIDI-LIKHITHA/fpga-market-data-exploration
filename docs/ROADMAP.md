@@ -27,11 +27,14 @@
 - [ ] Build testbench
 
 ## Phase 3 — Measurement
-- [ ] Add cycle counter/timestamps
-- [ ] Verify latency measurement
+- [x] Add cycle counter/timestamps
+- [x] Verify latency measurement
 - [ ] Create automated result extraction
-- [ ] Run baseline workloads
+- [x] Run baseline 1,000-vector workload
+- [ ] Select and document FPGA target
 - [ ] Synthesize baseline
+- [ ] Collect Fmax/WNS/TNS/critical path
+- [ ] Collect LUT/FF/BRAM/DSP utilization
 
 ## Phase 4 — Architecture exploration
 - [ ] Streaming/cut-through
