@@ -15,10 +15,12 @@ sys.path.insert(0, str(SCRIPT_DIR))
 from reference_model import MarketEvent
 
 
+ORDER_BOOK_DEPTH = 64
+
+
 def generate_workload(count: int, seed: int, mode: str = "mixed") -> list[MarketEvent]:
     rng = random.Random(seed)
     active: dict[int, tuple[str, int, int]] = {}
-    next_order_id = 1
     events: list[MarketEvent] = []
 
     add_probability = {
@@ -29,12 +31,18 @@ def generate_workload(count: int, seed: int, mode: str = "mixed") -> list[Market
     }[mode]
 
     for sequence in range(1, count + 1):
-        if not active or rng.random() < add_probability:
+        can_add = len(active) < ORDER_BOOK_DEPTH
+
+        if (not active or (can_add and rng.random() < add_probability)):
             side = rng.choice(("BUY", "SELL"))
             price = rng.randint(9990, 10010)
             quantity = rng.randint(1, 25)
-            order_id = next_order_id
-            next_order_id += 1
+
+            available_ids = [
+                order_id for order_id in range(ORDER_BOOK_DEPTH)
+                if order_id not in active
+            ]
+            order_id = rng.choice(available_ids)
             active[order_id] = (side, price, quantity)
             event_type = "ADD"
         else:
