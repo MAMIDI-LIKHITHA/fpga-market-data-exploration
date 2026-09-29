@@ -29,7 +29,7 @@ module baseline_market_pipeline(
         if(best_ask!=32'hFFFFFFFF && best_bid!=0 && (best_ask-best_bid)<=32'd5) begin
           if(position+1<=32'd100) begin out_risk_accept<=1; out_price<=best_bid; out_quantity<=1; position<=position+1; end
           else begin out_risk_accept<=0; out_price<=best_bid; out_quantity<=0; end
-        end else begin out_risk_accept<=0; out_price<=0; out_quantity<=0; end
+        end else begin out_risk_accept<=0; out_price<=32'hFFFFFFFF; out_quantity<=0; end
         out_latency_cycles<=timestamp-rx_timestamp;
       end
     end
