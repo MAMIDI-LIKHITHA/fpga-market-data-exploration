@@ -124,7 +124,7 @@ module tb_baseline_golden_icarus;
         );
 
         $display(
-          "  EXP seq=%0d bid=%0d ask=%0d spread=%0d signal=%0d risk=%0d price=%h qty=%h",
+          "  EXP seq=%0d bid=%h ask=%h spread=%h signal=%0d risk=%0d price=%h qty=%h",
           eseq,
           ebid,
           eask,
@@ -153,6 +153,8 @@ module tb_baseline_golden_icarus;
   initial begin
     bit send_ok;
     bit check_ok;
+    reg [127:0] current_event;
+    reg [255:0] current_expected;
 
     $display("==============================================");
     $display("BASELINE MARKET PIPELINE GOLDEN TEST (ICARUS)");
@@ -172,10 +174,13 @@ module tb_baseline_golden_icarus;
     rst_n = 1'b1;
 
     for (k = 0; k < N; k = k + 1) begin
-      send_event(events[k], send_ok);
+      current_event = events[k];
+      current_expected = expected[k];
+
+      send_event(current_event, send_ok);
 
       if (send_ok) begin
-        check_output(expected[k], check_ok);
+        check_output(current_expected, check_ok);
       end
 
       if (!send_ok || !check_ok) begin
