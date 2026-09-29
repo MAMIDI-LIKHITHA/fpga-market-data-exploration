@@ -25,7 +25,7 @@ The full best-price scan intentionally exposes a likely architectural cost. Late
 
 tb/sv/tb_baseline_market_pipeline.sv is a smoke test for ADD, CANCEL, TRADE and MODIFY.
 
-The next verification step is automatic comparison against the Python golden JSONL vectors. FPGA implementation reports will then provide Fmax, WNS, TNS and resource utilization.
+The baseline has now been automatically compared against 1,000 deterministic Python golden JSONL vectors. The result was 1,000/1,000 matches with 0 failures and 0 timeouts. FPGA implementation reports will then provide Fmax, WNS, TNS and resource utilization.
 
 ## Latency boundary
 
