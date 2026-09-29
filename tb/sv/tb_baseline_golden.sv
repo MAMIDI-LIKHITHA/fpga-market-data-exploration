@@ -147,7 +147,8 @@ module tb_baseline_golden;
 
       end
 
-      received = received + 1;
+      // check_output increments received after each successful comparison.
+      // Do not increment it again here.
     end
   endtask
 
