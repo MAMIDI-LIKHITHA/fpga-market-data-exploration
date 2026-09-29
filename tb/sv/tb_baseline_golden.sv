@@ -1,6 +1,7 @@
 module tb_baseline_golden;
 
   localparam int N = 1000;
+  localparam int TIMEOUT_CYCLES = 100;
 
   logic clk = 0;
   logic rst_n = 0;
@@ -28,23 +29,37 @@ module tb_baseline_golden;
 
   always #5 clk = ~clk;
 
-  task automatic send_event(input [127:0] word);
+  task automatic send_event(input [127:0] word, output bit success);
+    integer wait_cycles;
     begin
+      success = 1'b1;
+      wait_cycles = 0;
+
       @(negedge clk);
       in_event = word;
       in_valid = 1'b1;
 
       @(posedge clk);
 
-      while (!in_ready)
+      while (!in_ready) begin
         @(posedge clk);
+        wait_cycles = wait_cycles + 1;
+        if (wait_cycles >= TIMEOUT_CYCLES) begin
+          $display("TIMEOUT waiting for in_ready at vector %0d", received);
+          failures = failures + 1;
+          success = 1'b0;
+          @(negedge clk);
+          in_valid = 1'b0;
+          return;
+        end
+      end
 
       @(negedge clk);
       in_valid = 1'b0;
     end
   endtask
 
-  task automatic check_output(input [255:0] exp);
+  task automatic check_output(input [255:0] exp, output bit success);
     reg [31:0] eseq;
     reg [31:0] ebid;
     reg [31:0] eask;
@@ -54,12 +69,24 @@ module tb_baseline_golden;
     reg [31:0] eqty;
     reg esignal;
     reg erisk;
+    integer wait_cycles;
 
     begin
+      success = 1'b1;
+      wait_cycles = 0;
+
       @(posedge clk);
 
-      while (!out_valid)
+      while (!out_valid) begin
         @(posedge clk);
+        wait_cycles = wait_cycles + 1;
+        if (wait_cycles >= TIMEOUT_CYCLES) begin
+          $display("TIMEOUT waiting for out_valid at vector %0d", received);
+          failures = failures + 1;
+          success = 1'b0;
+          return;
+        end
+      end
 
       eseq    = exp[255:224];
       ebid    = exp[223:192];
@@ -125,10 +152,13 @@ module tb_baseline_golden;
   endtask
 
   initial begin
+    bit send_ok;
+    bit check_ok;
 
     $display("==============================================");
     $display("BASELINE MARKET PIPELINE GOLDEN TEST");
     $display("Vectors: %0d", N);
+    $display("Timeout: %0d cycles", TIMEOUT_CYCLES);
     $display("==============================================");
 
     $readmemh("data/workloads/events.mem", events);
@@ -143,10 +173,18 @@ module tb_baseline_golden;
     rst_n = 1'b1;
 
     for (integer k = 0; k < N; k = k + 1) begin
+      send_event(events[k], send_ok);
 
-      send_event(events[k]);
-      check_output(expected[k]);
+      if (send_ok) begin
+        check_output(expected[k], check_ok);
+      end
 
+      if (!send_ok || !check_ok) begin
+        $display("ABORTING GOLDEN TEST after vector %0d", received);
+        break;
+      end
+
+      received = received + 1;
     end
 
     repeat (2)
@@ -159,7 +197,7 @@ module tb_baseline_golden;
     $display("Vectors checked : %0d", received);
     $display("Failures        : %0d", failures);
 
-    if (failures == 0)
+    if (failures == 0 && received == N)
       $display("GOLDEN TEST PASSED: %0d/%0d vectors", received, N);
     else
       $display("GOLDEN TEST FAILED: %0d failures", failures);
@@ -167,7 +205,6 @@ module tb_baseline_golden;
     $display("==============================================");
 
     $finish;
-
   end
 
   baseline_market_pipeline dut(
